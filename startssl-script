@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# путь, куда складывать все файлы для nginx
+CERT_PATH=/etc/nginx/conf.d/ssl
+
+echo "Подготовка ключа и сертификата для nginx."
+echo "Предполагается, что в текущей директории лежат файлы DOMAIN.key и DOMAIN.crt"
+echo "Если этих файлов нет, будет запрошено их содержание"
+echo -n "Enter domain name: "
+read DOMAIN
+
+# расшифровываем ключ, чтобы при перезагрузке nginx не спрашивало пароль
+if ! [ -f $DOMAIN.key ] ; then
+echo "Вставьте содержимое private key. В конце файла должен быть перевод строки. По окончании нужно нажать Ctrl-D"
+cat >$DOMAIN.key
+fi
+openssl rsa -in $DOMAIN.key -out $CERT_PATH/$DOMAIN-ssl-decrypted.key
+chmod 600 $CERT_PATH/$DOMAIN-ssl-decrypted.key
+
+# подгружаем сертификаты, если их еще нет
+if ! [ -f ca.pem ] ; then
+wget http://www.startssl.com/certs/ca.pem
+fi
+if ! [ -f sub.class1.server.ca.pem ] ; then
+wget http://www.startssl.com/certs/sub.class1.server.ca.pem
+fi
+
+# создаем объединенный сертификат
+if ! [ -f $DOMAIN.crt ] ; then
+echo "Вставьте содержимое certificate. В конце файла должен быть перевод строки. По окончании нужно нажать Ctrl-D"
+cat >$DOMAIN.crt
+fi
+cat $DOMAIN.crt sub.class1.server.ca.pem ca.pem > $CERT_PATH/$DOMAIN-ssl-unified.crt
