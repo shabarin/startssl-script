@@ -31,3 +31,9 @@ echo "Вставьте содержимое certificate. В конце файл�
 cat >$DOMAIN.crt
 fi
 cat $DOMAIN.crt sub.class1.server.ca.pem ca.pem > $CERT_PATH/$DOMAIN-ssl-unified.crt
+
+echo "В конфигурацию nginx нужно добавить строки:"
+echo "listen 176.9.36.54:443;"
+echo "ssl on;"
+echo "ssl_certificate $CERT_PATH/$DOMAIN-ssl-unified.crt;"
+echo "ssl_certificate_key $CERT_PATH/$DOMAIN-ssl-decrypted.key;"
