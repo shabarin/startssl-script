@@ -27,7 +27,7 @@ fi
 
 # создаем объединенный сертификат
 if ! [ -f $DOMAIN.crt ] ; then
-echo "Вставьте содержимое certificate. В конце файла должен быть перевод строки. По окончании нужно нажать Ctrl-D"
+    echo "Вставьте содержимое certificate (с 2016 года это то, что лежит в полученном от startssl архиве ApacheServer.zip, в файле, который начинается с двойки). В конце файла должен быть перевод строки. По окончании нужно нажать Ctrl-D"
 cat >$DOMAIN.crt
 fi
 cat $DOMAIN.crt sub.class1.server.ca.pem ca.pem > $CERT_PATH/$DOMAIN-ssl-unified.crt
